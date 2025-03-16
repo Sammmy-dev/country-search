@@ -35,50 +35,53 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
-      <div className="flex justify-between items-center">
+    <div>
+      <div className="shadow-lg p-6 flex justify-between items-center bg-white h-[60px]">
         <h1 className="text-2xl font-bold">Where in the world?</h1>
-        <h1 className=" flex items-center font-bold cursor-pointer">
+        <p className=" flex items-center font-bold cursor-pointer">
           <FiMoon className="text-xl" />
           <span className="ml-3">Dark Mode</span>
-        </h1>
+        </p>
       </div>
+      <div className="min-h-screen bg-gray-100 text-gray-900 p-6 pt-6">
+        <div className="flex justify-between flex-wrap gap-4">
+          <div className="relative w-full md:w-1/3 bg-white">
+            <FaSearch className="absolute left-3 top-3 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search for a country..."
+              className="p-10 py-2 w-full rounded shadow focus:outline-none"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
 
-      <div className="mt-6 flex justify-between flex-wrap gap-4">
-        <div className="relative w-full md:w-1/3">
-          <FaSearch className="absolute left-3 top-3 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search for a country..."
-            className="pl-10 pr-4 py-2 w-full border rounded shadow focus:outline-none"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
+          <select
+            className="rounded shadow-lg p-2 w-40 focus:outline-none bg-white"
+            onChange={(e) => setSelectedRegion(e.target.value)}
+          >
+            <option value="">Filter by Region</option>
+            <option value="Africa">Africa</option>
+            <option value="Americas">America</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="Oceania">Oceania</option>
+          </select>
         </div>
 
-        <select
-          className="border rounded shadow p-2 w-40"
-          onChange={(e) => setSelectedRegion(e.target.value)}
-        >
-          <option value="">Filter by Region</option>
-          <option value="Africa">Africa</option>
-          <option value="Americas">America</option>
-          <option value="Asia">Asia</option>
-          <option value="Europe">Europe</option>
-          <option value="Oceania">Oceania</option>
-        </select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-        {filteredCountries.map((country) => (
-          <div key={country.name} className="bg-white p-4 rounded shadow">
-            <img src={country.flag} alt={country.name} className="w-full h-32 object-cover rounded" />
-            <h2 className="font-bold text-lg mt-2">{country.name}</h2>
-            <p><strong>Population:</strong> {country.population}</p>
-            <p><strong>Region:</strong> {country.region}</p>
-            <p><strong>Capital:</strong> {country.capital}</p>
-          </div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[80px] mt-6">
+          {filteredCountries.map((country) => (
+            <div key={country.name} className="rounded-lg overflow-hidden shadow">
+              <img src={country.flag} alt={country.name} className="w-full h-[50%] object-cover" />
+              <div className="bg-white p-4 pb-12 h-[50%]">
+                <h2 className="font-bold text-lg mt-2 mb-3">{country.name}</h2>
+                <p className="text-sm"><strong>Population:</strong> {country.population}</p>
+                <p className="text-sm"><strong>Region:</strong> {country.region}</p>
+                <p className="text-sm"><strong>Capital:</strong> {country.capital}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
