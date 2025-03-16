@@ -1,29 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { create } from "zustand";
 import { FiMoon } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
 
 const useCountryStore = create((set) => ({
-  countries: [
-    { name: "Germany", population: "81,770,900", region: "Europe", capital: "Berlin", flag: "🇩🇪" },
-    { name: "United States of America", population: "323,947,000", region: "Americas", capital: "Washington, D.C.", flag: "🇺🇸" },
-    { name: "Brazil", population: "206,135,893", region: "Americas", capital: "Brasília", flag: "🇧🇷" },
-    { name: "Iceland", population: "334,300", region: "Europe", capital: "Reykjavík", flag: "🇮🇸" },
-    { name: "Afghanistan", population: "27,657,145", region: "Asia", capital: "Kabul", flag: "🇦🇫" },
-    { name: "Åland Islands", population: "28,875", region: "Europe", capital: "Mariehamn", flag: "🇦🇽" },
-    { name: "Albania", population: "2,886,026", region: "Europe", capital: "Tirana", flag: "🇦🇱" },
-    { name: "Algeria", population: "40,400,000", region: "Africa", capital: "Algiers", flag: "🇩🇿" },
-  ],
-  filterRegion: (region) =>
-    set((state) => ({
-      countries: state.countries.filter((country) => country.region === region),
-    })),
+  countries: [],
+  setCountries: (data) => set({ countries: data }),
 }));
 
 const App = () => {
   const [query, setQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("");
-  const { countries } = useCountryStore();
+  const { countries, setCountries } = useCountryStore();
+
+  useEffect(() => {
+    fetch("https://restcountries.com/v3.1/all")
+      .then((res) => res.json())
+      .then((data) => {
+        const formattedData = data.map((country) => ({
+          name: country.name.common,
+          population: country.population.toLocaleString(),
+          region: country.region,
+          capital: country.capital ? country.capital[0] : "N/A",
+          flag: country.flags.svg,
+        }));
+        setCountries(formattedData);
+      });
+  }, [setCountries]);
 
   const filteredCountries = countries.filter(
     (country) =>
@@ -35,7 +38,10 @@ const App = () => {
     <div className="min-h-screen bg-gray-100 text-gray-900 p-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Where in the world?</h1>
-        <FiMoon className="text-xl cursor-pointer" />
+        <h1 className=" flex items-center font-bold cursor-pointer">
+          <FiMoon className="text-xl" />
+          <span className="ml-3">Dark Mode</span>
+        </h1>
       </div>
 
       <div className="mt-6 flex justify-between flex-wrap gap-4">
@@ -66,7 +72,7 @@ const App = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
         {filteredCountries.map((country) => (
           <div key={country.name} className="bg-white p-4 rounded shadow">
-            <div className="text-5xl text-center">{country.flag}</div>
+            <img src={country.flag} alt={country.name} className="w-full h-32 object-cover rounded" />
             <h2 className="font-bold text-lg mt-2">{country.name}</h2>
             <p><strong>Population:</strong> {country.population}</p>
             <p><strong>Region:</strong> {country.region}</p>
